@@ -14,9 +14,17 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
 
+    // 일정 등록
     @PostMapping("/register")
     public ResponseEntity<Schedule> saveSchedule(@RequestBody ScheduleDto scheduleDto) {
         Schedule schedule = scheduleService.saveSchedule(scheduleDto);
+        return new ResponseEntity<>(schedule, HttpStatus.OK);
+    }
+
+    // 특정 일정 조회  /read?id=조회할 id값
+    @GetMapping("/read")
+    public ResponseEntity<Schedule> getSchedule(@RequestParam Long id) {
+        Schedule schedule = scheduleService.get(id);
         return new ResponseEntity<>(schedule, HttpStatus.OK);
     }
 }

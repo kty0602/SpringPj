@@ -43,7 +43,7 @@ public class ScheduleRepository {
         return id;
     }
 
-    // 저장된 일 내용 가져오기
+    // 저장된 일 특정 Id값을 통해 내용 가져오기
     public Schedule findById(Long scheduleId) {
         String sql = "SELECT * FROM Schedule WHERE scheduleId = ?";
         return jdbcTemplate.queryForObject(sql, scheduleRowMapper(), scheduleId);
