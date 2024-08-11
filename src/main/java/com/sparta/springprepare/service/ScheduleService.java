@@ -6,6 +6,8 @@ import com.sparta.springprepare.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ScheduleService {
@@ -21,5 +23,9 @@ public class ScheduleService {
     // 선택한 일정 조회
     public Schedule get(Long scheduleId) {
         return scheduleRepository.findById(scheduleId);
+    }
+
+    public List<Schedule> findAllList() {
+        return scheduleRepository.getList();
     }
 }

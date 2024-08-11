@@ -7,6 +7,8 @@ import lombok.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/schedule")
 @RequiredArgsConstructor
@@ -26,5 +28,12 @@ public class ScheduleController {
     public ResponseEntity<Schedule> getSchedule(@RequestParam Long id) {
         Schedule schedule = scheduleService.get(id);
         return new ResponseEntity<>(schedule, HttpStatus.OK);
+    }
+
+    // 전체 일정 조회
+    @GetMapping("/list")
+    public ResponseEntity<List<Schedule>> getAllList() {
+        List<Schedule> scheduleList = scheduleService.findAllList();
+        return new ResponseEntity<>(scheduleList, HttpStatus.OK);
     }
 }

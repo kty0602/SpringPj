@@ -7,6 +7,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 public class ScheduleRepository {
@@ -49,8 +51,10 @@ public class ScheduleRepository {
         return jdbcTemplate.queryForObject(sql, scheduleRowMapper(), scheduleId);
     }
 
-
-
-
+    // 전체 일정 가져오기
+    public List<Schedule> getList() {
+        String sql = "SELECT * FROM Schedule WHERE deleteStatus = FALSE";
+        return jdbcTemplate.query(sql, scheduleRowMapper());
+    }
 
 }
