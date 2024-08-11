@@ -25,6 +25,7 @@ public class ScheduleService {
         return scheduleRepository.findById(scheduleId);
     }
 
+    // 전체 일정 조회
     public List<Schedule> findAllList() {
         return scheduleRepository.getList();
     }
