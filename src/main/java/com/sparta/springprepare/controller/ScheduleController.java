@@ -44,4 +44,10 @@ public class ScheduleController {
         return new ResponseEntity<>(schedule, HttpStatus.OK);
     }
 
+    // 일정 삭제
+    @PatchMapping("/delete")
+    public ResponseEntity<String> deleteSchedule(@RequestBody ScheduleDto scheduleDto) {
+        scheduleService.deleteSchedule(scheduleDto);
+        return new ResponseEntity<>("성공적으로 삭제가 되었습니다.", HttpStatus.OK);
+    }
 }

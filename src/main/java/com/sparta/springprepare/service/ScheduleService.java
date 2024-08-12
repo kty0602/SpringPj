@@ -38,4 +38,12 @@ public class ScheduleService {
         }
         return scheduleRepository.findById(scheduleDto.getScheduleId());
     }
+
+    // 일정 삭제
+    public void deleteSchedule(ScheduleDto scheduleDto) {
+        int i = scheduleRepository.delete(scheduleDto);
+        if(i == 0) {
+            throw new IllegalStateException("비밀번호가 틀리거나, 해당 일정이 없습니다.");
+        }
+    }
 }

@@ -61,8 +61,14 @@ public class ScheduleRepository {
     // 참고 : https://preamtree.tistory.com/91
     public int update(ScheduleDto scheduleDto) {
         String sql = "UPDATE Schedule SET contents = ?, manager = ?, modDate = CURRENT_TIMESTAMP " +
-                "WHERE scheduleId = ? AND password =?";
+                "WHERE scheduleId = ? AND password = ?";
         return jdbcTemplate.update(sql, scheduleDto.getContents(), scheduleDto.getManager(), scheduleDto.getScheduleId(), scheduleDto.getPassword());
+    }
+
+    // 일정 삭제
+    public int delete(ScheduleDto scheduleDto) {
+        String sql = "UPDATE Schedule SET deleteStatus = TRUE WHERE ScheduleId = ? AND password = ?";
+        return jdbcTemplate.update(sql, scheduleDto.getScheduleId(), scheduleDto.getPassword());
     }
 
 }
