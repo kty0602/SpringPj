@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -52,9 +53,21 @@ public class ScheduleRepository {
     }
 
     // 전체 일정 가져오기
-    public List<Schedule> getList() {
+    // 동적 쿼리 참고 : https://rlaehddnd0422.tistory.com/93
+    public List<Schedule> getList(String manager, String modDate) {
+        List<Object> params = new ArrayList<>();
         String sql = "SELECT * FROM Schedule WHERE deleteStatus = FALSE";
-        return jdbcTemplate.query(sql, scheduleRowMapper());
+
+        // 값이 있다면 sql 문자열에 추가로 붙이기
+        if(manager != null) {
+            sql += " AND manager = ?";
+            params.add(manager);
+        }
+        if(modDate != null) {
+            sql += " AND DATE(modDate) = DATE(?)";  // 날짜 부분만 필터링 시분초까지 입력받지 말자..
+            params.add(modDate);
+        }
+        return jdbcTemplate.query(sql, params.toArray(), scheduleRowMapper());
     }
 
     // 일정 수정 -> JdbcTemplate update 메서드 사용 시 실행 후 영향을 받은 행의 수를 반환
