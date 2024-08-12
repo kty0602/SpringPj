@@ -57,4 +57,12 @@ public class ScheduleRepository {
         return jdbcTemplate.query(sql, scheduleRowMapper());
     }
 
+    // 일정 수정 -> JdbcTemplate update 메서드 사용 시 실행 후 영향을 받은 행의 수를 반환
+    // 참고 : https://preamtree.tistory.com/91
+    public int update(ScheduleDto scheduleDto) {
+        String sql = "UPDATE Schedule SET contents = ?, manager = ?, modDate = CURRENT_TIMESTAMP " +
+                "WHERE scheduleId = ? AND password =?";
+        return jdbcTemplate.update(sql, scheduleDto.getContents(), scheduleDto.getManager(), scheduleDto.getScheduleId(), scheduleDto.getPassword());
+    }
+
 }

@@ -29,4 +29,13 @@ public class ScheduleService {
     public List<Schedule> findAllList() {
         return scheduleRepository.getList();
     }
+
+    // 일정 수정
+    public Schedule updateSchedule(ScheduleDto scheduleDto) {
+        int i = scheduleRepository.update(scheduleDto);
+        if(i == 0) {
+            throw new IllegalStateException("비밀번호가 틀렸습니다.");
+        }
+        return scheduleRepository.findById(scheduleDto.getScheduleId());
+    }
 }

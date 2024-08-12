@@ -36,4 +36,12 @@ public class ScheduleController {
         List<Schedule> scheduleList = scheduleService.findAllList();
         return new ResponseEntity<>(scheduleList, HttpStatus.OK);
     }
+
+    // 일정 수정
+    @PatchMapping("/update")
+    public ResponseEntity<Schedule> modifySchedule(@RequestBody ScheduleDto scheduleDto) {
+        Schedule schedule = scheduleService.updateSchedule(scheduleDto);
+        return new ResponseEntity<>(schedule, HttpStatus.OK);
+    }
+
 }
