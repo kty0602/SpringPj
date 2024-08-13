@@ -1,6 +1,7 @@
 package com.sparta.springprepare.repository;
 
 import com.sparta.springprepare.dto.ScheduleDto;
+import com.sparta.springprepare.entity.Manager;
 import com.sparta.springprepare.entity.Schedule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,10 +22,18 @@ public class ScheduleRepository {
     private RowMapper<Schedule> scheduleRowMapper() {
         return((rs, rowNum) -> {
             Schedule schedule = new Schedule();
+            Manager manager = new Manager();
             schedule.setScheduleId(rs.getLong("scheduleId"));
             schedule.setContents(rs.getString("contents"));
             schedule.setPassword(rs.getString("password"));
-            schedule.setManager(rs.getString("manager"));
+
+            manager.setManagerId(rs.getLong("managerId"));
+            manager.setManagerName(rs.getString("managerName"));
+            manager.setEmail(rs.getString("email"));
+            manager.setRegDate(rs.getTimestamp("regDate").toLocalDateTime());
+            manager.setModDate(rs.getTimestamp("modDate").toLocalDateTime());
+            schedule.setManager(manager);
+
             schedule.setRegDate(rs.getTimestamp("regDate").toLocalDateTime());
             schedule.setModDate(rs.getTimestamp("modDate").toLocalDateTime());
             schedule.setDeleteStatus(rs.getBoolean("deleteStatus"));
@@ -34,9 +43,9 @@ public class ScheduleRepository {
 
     // 할 일 등록
     public Long save(ScheduleDto scheduleDto) {
-        String sql = "INSERT INTO Schedule (contents, password, manager, regDate, modDate, deleteStatus) " +
+        String sql = "INSERT INTO Schedule (contents, password, managerId, regDate, modDate, deleteStatus) " +
                 "VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, FALSE)";
-        jdbcTemplate.update(sql, scheduleDto.getContents(), scheduleDto.getPassword(), scheduleDto.getManager());
+        jdbcTemplate.update(sql, scheduleDto.getContents(), scheduleDto.getPassword(), scheduleDto.getManagerId());
 
         // 최근 마지막에 삽입된 scheduleId값 가져오기 -> 작성할 때 등록된 정보를 반환받기 위해서
         // Long타입으로 직접 변환하려고 했으나 오류 발생,
@@ -46,25 +55,27 @@ public class ScheduleRepository {
         return id;
     }
 
-    // 저장된 일 특정 Id값을 통해 내용 가져오기
+    // 저장된 일 특정 Id값을 통해 내용 가져오기, + Manager 값들 가져오기 위해서 Join 실행
     public Schedule findById(Long scheduleId) {
-        String sql = "SELECT * FROM Schedule WHERE scheduleId = ?";
+        String sql = "SELECT s.*, m.* FROM Schedule s "+
+        "JOIN Manager m ON s.managerId = m.managerId WHERE s.scheduleId = ?";
         return jdbcTemplate.queryForObject(sql, scheduleRowMapper(), scheduleId);
     }
 
-    // 전체 일정 가져오기
+    // 전체 일정 가져오기, + Manager 값들 가져오기 위해서 Join 실행
     // 동적 쿼리 참고 : https://rlaehddnd0422.tistory.com/93
-    public List<Schedule> getList(String manager, String modDate) {
+    public List<Schedule> getList(Long managerId, String modDate) {
         List<Object> params = new ArrayList<>();
-        String sql = "SELECT * FROM Schedule WHERE deleteStatus = FALSE";
+        String sql = "SELECT s.*, m.* FROM Schedule s " +
+                "JOIN Manager m ON s.managerId = m.managerId WHERE s.deleteStatus = FALSE";
 
         // 값이 있다면 sql 문자열에 추가로 붙이기
-        if(manager != null) {
-            sql += " AND manager = ?";
-            params.add(manager);
+        if(managerId != null) {
+            sql += " AND s.managerId = ?";
+            params.add(managerId);
         }
         if(modDate != null) {
-            sql += " AND DATE(modDate) = DATE(?)";  // 날짜 부분만 필터링 시분초까지 입력받지 말자..
+            sql += " AND DATE(s.modDate) = DATE(?)";  // 날짜 부분만 필터링 시분초까지 입력받지 말자..
             params.add(modDate);
         }
         return jdbcTemplate.query(sql, params.toArray(), scheduleRowMapper());
@@ -73,9 +84,9 @@ public class ScheduleRepository {
     // 일정 수정 -> JdbcTemplate update 메서드 사용 시 실행 후 영향을 받은 행의 수를 반환
     // 참고 : https://preamtree.tistory.com/91
     public int update(ScheduleDto scheduleDto) {
-        String sql = "UPDATE Schedule SET contents = ?, manager = ?, modDate = CURRENT_TIMESTAMP " +
+        String sql = "UPDATE Schedule SET contents = ?, managerId = ?, modDate = CURRENT_TIMESTAMP " +
                 "WHERE scheduleId = ? AND password = ?";
-        return jdbcTemplate.update(sql, scheduleDto.getContents(), scheduleDto.getManager(), scheduleDto.getScheduleId(), scheduleDto.getPassword());
+        return jdbcTemplate.update(sql, scheduleDto.getContents(), scheduleDto.getManagerId(), scheduleDto.getScheduleId(), scheduleDto.getPassword());
     }
 
     // 일정 삭제

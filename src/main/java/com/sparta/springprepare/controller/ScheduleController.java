@@ -32,8 +32,8 @@ public class ScheduleController {
 
     // 전체 일정 조회
     @GetMapping("/list")
-    public ResponseEntity<List<Schedule>> getAllList(@RequestParam(required = false) String manager, @RequestParam(required = false) String modDate) {
-        List<Schedule> scheduleList = scheduleService.findAllList(manager, modDate);
+    public ResponseEntity<List<Schedule>> getAllList(@RequestParam(required = false) Long managerId, @RequestParam(required = false) String modDate) {
+        List<Schedule> scheduleList = scheduleService.findAllList(managerId, modDate);
         return new ResponseEntity<>(scheduleList, HttpStatus.OK);
     }
 
