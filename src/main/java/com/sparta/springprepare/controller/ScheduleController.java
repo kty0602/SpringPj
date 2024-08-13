@@ -31,9 +31,15 @@ public class ScheduleController {
     }
 
     // 전체 일정 조회
+    // defaultValue 설정 안하려고 했지만, 데이터가 무수히 많을 때를 생각하면 기본값은 설정되어야지 보기 좋겠다 생각해서 설정
     @GetMapping("/list")
-    public ResponseEntity<List<Schedule>> getAllList(@RequestParam(required = false) Long managerId, @RequestParam(required = false) String modDate) {
-        List<Schedule> scheduleList = scheduleService.findAllList(managerId, modDate);
+    public ResponseEntity<List<Schedule>> getAllList(
+            @RequestParam(required = false) Long managerId,
+            @RequestParam(required = false) String modDate,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize
+    ) {
+        List<Schedule> scheduleList = scheduleService.findAllList(managerId, modDate, pageNumber, pageSize);
         return new ResponseEntity<>(scheduleList, HttpStatus.OK);
     }
 

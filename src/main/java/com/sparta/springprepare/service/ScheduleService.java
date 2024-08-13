@@ -26,8 +26,8 @@ public class ScheduleService {
     }
 
     // 전체 일정 조회
-    public List<Schedule> findAllList(Long managerId, String modDate) {
-        return scheduleRepository.getList(managerId, modDate);
+    public List<Schedule> findAllList(Long managerId, String modDate, int pageNumber, int pageSize) {
+        return scheduleRepository.getList(managerId, modDate, pageNumber, pageSize);
     }
 
     // 일정 수정

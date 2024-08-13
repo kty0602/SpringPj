@@ -64,7 +64,7 @@ public class ScheduleRepository {
 
     // 전체 일정 가져오기, + Manager 값들 가져오기 위해서 Join 실행
     // 동적 쿼리 참고 : https://rlaehddnd0422.tistory.com/93
-    public List<Schedule> getList(Long managerId, String modDate) {
+    public List<Schedule> getList(Long managerId, String modDate, int pageNumber, int pageSize) {
         List<Object> params = new ArrayList<>();
         String sql = "SELECT s.*, m.* FROM Schedule s " +
                 "JOIN Manager m ON s.managerId = m.managerId WHERE s.deleteStatus = FALSE";
@@ -78,6 +78,14 @@ public class ScheduleRepository {
             sql += " AND DATE(s.modDate) = DATE(?)";  // 날짜 부분만 필터링 시분초까지 입력받지 말자..
             params.add(modDate);
         }
+
+        // sql의 Limit과 OFFSET을 통해서 페이지네이션을 구현
+        // 참고 : https://velog.io/@yoonuk/%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4-Pagination%EC%9D%84-%EA%B5%AC%ED%98%84%ED%95%98%EB%8A%94-SQL
+        int offset = pageNumber * pageSize;
+        sql += " LIMIT ? OFFSET ?";
+        params.add(pageSize);
+        params.add(offset);
+
         return jdbcTemplate.query(sql, params.toArray(), scheduleRowMapper());
     }
 
