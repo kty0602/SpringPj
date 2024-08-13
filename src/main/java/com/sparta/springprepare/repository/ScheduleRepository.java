@@ -4,6 +4,7 @@ import com.sparta.springprepare.dto.ScheduleDto;
 import com.sparta.springprepare.entity.Manager;
 import com.sparta.springprepare.entity.Schedule;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -59,7 +60,11 @@ public class ScheduleRepository {
     public Schedule findById(Long scheduleId) {
         String sql = "SELECT s.*, m.* FROM Schedule s "+
         "JOIN Manager m ON s.managerId = m.managerId WHERE s.scheduleId = ?";
-        return jdbcTemplate.queryForObject(sql, scheduleRowMapper(), scheduleId);
+        try {
+            return jdbcTemplate.queryForObject(sql, scheduleRowMapper(), scheduleId);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     // 전체 일정 가져오기, + Manager 값들 가져오기 위해서 Join 실행
@@ -103,4 +108,11 @@ public class ScheduleRepository {
         return jdbcTemplate.update(sql, scheduleDto.getScheduleId(), scheduleDto.getPassword());
     }
 
+    // 일정 삭제 체크(이미 삭제가 된건지 아닌건지 확인)
+    // Boolean.class 타입으로 매핑되어 반환 true인지 false인지, true이면 삭제되었다는 것을 의미
+    public boolean isDelete(ScheduleDto scheduleDto) {
+        String sql = "SELECT deleteStatus FROM Schedule WHERE scheduleId = ?";
+        Boolean isDelete = jdbcTemplate.queryForObject(sql, Boolean.class, scheduleDto.getScheduleId());
+        return isDelete;
+    }
 }

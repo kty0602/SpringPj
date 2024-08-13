@@ -2,6 +2,7 @@ package com.sparta.springprepare.service;
 
 import com.sparta.springprepare.dto.ScheduleDto;
 import com.sparta.springprepare.entity.Schedule;
+import com.sparta.springprepare.exception.*;
 import com.sparta.springprepare.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,8 +22,13 @@ public class ScheduleService {
     }
 
     // 선택한 일정 조회
+    // 삭제된 일정을 조회하면 데이터가 나오지 않으므로 Exception 처리
     public Schedule get(Long scheduleId) {
-        return scheduleRepository.findById(scheduleId);
+        Schedule schedule = scheduleRepository.findById(scheduleId);
+        if(schedule == null || schedule.isDeleteStatus()) {
+            throw new NotFoundException("해당 일정이 존재하지 않거나 이미 삭제된 일정입니다.");
+        }
+        return schedule;
     }
 
     // 전체 일정 조회
@@ -34,16 +40,19 @@ public class ScheduleService {
     public Schedule updateSchedule(ScheduleDto scheduleDto) {
         int i = scheduleRepository.update(scheduleDto);
         if(i == 0) {
-            throw new IllegalStateException("비밀번호가 틀렸습니다.");
+            throw new PasswordErrorException("비밀번호가 일치하지 않습니다.");
         }
         return scheduleRepository.findById(scheduleDto.getScheduleId());
     }
 
     // 일정 삭제
     public void deleteSchedule(ScheduleDto scheduleDto) {
+        if(scheduleRepository.isDelete(scheduleDto)) {
+            throw new AlreadyDeleteException("이미 삭제된 일정입니다.");
+        }
         int i = scheduleRepository.delete(scheduleDto);
         if(i == 0) {
-            throw new IllegalStateException("비밀번호가 틀리거나, 해당 일정이 없습니다.");
+            throw new PasswordErrorException("비밀번호가 틀리거나, 해당 일정이 없습니다.");
         }
     }
 }
