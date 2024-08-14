@@ -3,8 +3,10 @@ package com.sparta.springprepare.controller;
 import com.sparta.springprepare.dto.ManagerDto;
 import com.sparta.springprepare.entity.Manager;
 import com.sparta.springprepare.service.ManagerService;
-import lombok.*;
-import org.springframework.http.*;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,7 +18,7 @@ public class ManagerController {
 
     // 관리자 등록
     @PostMapping("/register")
-    public ResponseEntity<Manager> saveManager(@RequestBody ManagerDto managerDto) {
+    public ResponseEntity<Manager> saveManager(@Valid @RequestBody ManagerDto managerDto) {
         Manager manager = managerService.saveManager(managerDto);
         return new ResponseEntity<>(manager, HttpStatus.OK);
     }

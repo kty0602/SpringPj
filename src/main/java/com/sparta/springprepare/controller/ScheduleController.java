@@ -3,8 +3,10 @@ package com.sparta.springprepare.controller;
 import com.sparta.springprepare.dto.ScheduleDto;
 import com.sparta.springprepare.entity.Schedule;
 import com.sparta.springprepare.service.ScheduleService;
-import lombok.*;
-import org.springframework.http.*;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +20,7 @@ public class ScheduleController {
 
     // 일정 등록
     @PostMapping("/register")
-    public ResponseEntity<Schedule> saveSchedule(@RequestBody ScheduleDto scheduleDto) {
+    public ResponseEntity<Schedule> saveSchedule(@Valid @RequestBody ScheduleDto scheduleDto) {
         Schedule schedule = scheduleService.saveSchedule(scheduleDto);
         return new ResponseEntity<>(schedule, HttpStatus.OK);
     }
