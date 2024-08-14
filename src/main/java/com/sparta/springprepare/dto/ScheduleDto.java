@@ -11,7 +11,6 @@ import lombok.ToString;
 @Setter  // 테스트 코드에서 사용하기 위해 추가
 @ToString
 public class ScheduleDto {
-    private Long scheduleId;
     @NotNull
     @NotBlank
     @Size(max = 200)

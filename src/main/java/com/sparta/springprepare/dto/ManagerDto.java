@@ -9,7 +9,6 @@ import lombok.ToString;
 @Getter
 @ToString
 public class ManagerDto {
-    private Long managerId;
     @NotNull
     @NotBlank
     private String managerName;

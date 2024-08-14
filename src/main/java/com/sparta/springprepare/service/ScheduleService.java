@@ -37,20 +37,20 @@ public class ScheduleService {
     }
 
     // 일정 수정
-    public Schedule updateSchedule(ScheduleDto scheduleDto) {
-        int i = scheduleRepository.update(scheduleDto);
+    public Schedule updateSchedule(Long id, ScheduleDto scheduleDto) {
+        int i = scheduleRepository.update(id, scheduleDto);
         if(i == 0) {
             throw new PasswordErrorException("비밀번호가 일치하지 않습니다.");
         }
-        return scheduleRepository.findById(scheduleDto.getScheduleId());
+        return scheduleRepository.findById(id);
     }
 
     // 일정 삭제
-    public void deleteSchedule(ScheduleDto scheduleDto) {
-        if(scheduleRepository.isDelete(scheduleDto)) {
+    public void deleteSchedule(Long id, ScheduleDto scheduleDto) {
+        if(scheduleRepository.isDelete(id)) {
             throw new AlreadyDeleteException("이미 삭제된 일정입니다.");
         }
-        int i = scheduleRepository.delete(scheduleDto);
+        int i = scheduleRepository.delete(id, scheduleDto);
         if(i == 0) {
             throw new PasswordErrorException("비밀번호가 틀리거나, 해당 일정이 없습니다.");
         }

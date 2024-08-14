@@ -96,7 +96,7 @@ public class ScheduleRepository {
 
     // 일정 수정 -> JdbcTemplate update 메서드 사용 시 실행 후 영향을 받은 행의 수를 반환
     // 참고 : https://preamtree.tistory.com/91
-    public int update(ScheduleDto scheduleDto) {
+    public int update(Long id, ScheduleDto scheduleDto) {
         List<Object> params = new ArrayList<>();
         String sql = "UPDATE Schedule SET ";
         boolean isFirstField = true; // 들어오는 수정할 곳이 첫 필드인지 아닌지 검사
@@ -121,23 +121,23 @@ public class ScheduleRepository {
             sql += ", ";
         }
         sql += "modDate = CURRENT_TIMESTAMP WHERE scheduleId = ? AND password = ?";
-        params.add(scheduleDto.getScheduleId());
+        params.add(id);
         params.add(scheduleDto.getPassword());
 
         return jdbcTemplate.update(sql, params.toArray());
     }
 
     // 일정 삭제
-    public int delete(ScheduleDto scheduleDto) {
+    public int delete(Long id, ScheduleDto scheduleDto) {
         String sql = "UPDATE Schedule SET deleteStatus = TRUE WHERE ScheduleId = ? AND password = ?";
-        return jdbcTemplate.update(sql, scheduleDto.getScheduleId(), scheduleDto.getPassword());
+        return jdbcTemplate.update(sql, id, scheduleDto.getPassword());
     }
 
     // 일정 삭제 체크(이미 삭제가 된건지 아닌건지 확인)
     // Boolean.class 타입으로 매핑되어 반환 true인지 false인지, true이면 삭제되었다는 것을 의미
-    public boolean isDelete(ScheduleDto scheduleDto) {
+    public boolean isDelete(Long id) {
         String sql = "SELECT deleteStatus FROM Schedule WHERE scheduleId = ?";
-        Boolean isDelete = jdbcTemplate.queryForObject(sql, Boolean.class, scheduleDto.getScheduleId());
+        Boolean isDelete = jdbcTemplate.queryForObject(sql, Boolean.class, id);
         return isDelete;
     }
 }
