@@ -97,9 +97,34 @@ public class ScheduleRepository {
     // 일정 수정 -> JdbcTemplate update 메서드 사용 시 실행 후 영향을 받은 행의 수를 반환
     // 참고 : https://preamtree.tistory.com/91
     public int update(ScheduleDto scheduleDto) {
-        String sql = "UPDATE Schedule SET contents = ?, managerId = ?, modDate = CURRENT_TIMESTAMP " +
-                "WHERE scheduleId = ? AND password = ?";
-        return jdbcTemplate.update(sql, scheduleDto.getContents(), scheduleDto.getManagerId(), scheduleDto.getScheduleId(), scheduleDto.getPassword());
+        List<Object> params = new ArrayList<>();
+        String sql = "UPDATE Schedule SET ";
+        boolean isFirstField = true; // 들어오는 수정할 곳이 첫 필드인지 아닌지 검사
+
+        if(scheduleDto.getContents() != null) {
+            if (!isFirstField) { // 첫번째 필드가 아니라면 , 추가
+                sql += ", ";
+            }
+            sql += "contents = ?";
+            params.add(scheduleDto.getContents());
+            isFirstField = false;
+        }
+        if(scheduleDto.getManagerId() != null) {
+            if (!isFirstField) {
+                sql += ", ";
+            }
+            sql += "managerId = ?";
+            params.add(scheduleDto.getManagerId());
+            isFirstField = false;
+        }
+        if (!isFirstField) {
+            sql += ", ";
+        }
+        sql += "modDate = CURRENT_TIMESTAMP WHERE scheduleId = ? AND password = ?";
+        params.add(scheduleDto.getScheduleId());
+        params.add(scheduleDto.getPassword());
+
+        return jdbcTemplate.update(sql, params.toArray());
     }
 
     // 일정 삭제
