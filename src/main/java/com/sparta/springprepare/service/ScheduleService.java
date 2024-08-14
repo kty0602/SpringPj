@@ -2,7 +2,9 @@ package com.sparta.springprepare.service;
 
 import com.sparta.springprepare.dto.ScheduleDto;
 import com.sparta.springprepare.entity.Schedule;
-import com.sparta.springprepare.exception.*;
+import com.sparta.springprepare.exception.AlreadyDeleteException;
+import com.sparta.springprepare.exception.NotFoundException;
+import com.sparta.springprepare.exception.PasswordErrorException;
 import com.sparta.springprepare.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,17 +20,15 @@ public class ScheduleService {
     // 이후 findByID를 통해 해당 일정 내용을 가져와서 리턴한다.
     public Schedule saveSchedule(ScheduleDto scheduleDto) {
         Long id = scheduleRepository.save(scheduleDto);
-        return scheduleRepository.findById(id);
+        return scheduleRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("일어날 것 같지는 않은 오류 발생"));
     }
 
     // 선택한 일정 조회
     // 삭제된 일정을 조회하면 데이터가 나오지 않으므로 Exception 처리
     public Schedule get(Long scheduleId) {
-        Schedule schedule = scheduleRepository.findById(scheduleId);
-        if(schedule == null || schedule.isDeleteStatus()) {
-            throw new NotFoundException("해당 일정이 존재하지 않거나 이미 삭제된 일정입니다.");
-        }
-        return schedule;
+        return scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new NotFoundException("해당 일정이 존재하지 않거나 이미 삭제된 일정입니다."));
     }
 
     // 전체 일정 조회
@@ -42,13 +42,14 @@ public class ScheduleService {
         if(i == 0) {
             throw new PasswordErrorException("비밀번호가 일치하지 않습니다.");
         }
-        return scheduleRepository.findById(id);
+        return scheduleRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("해당 일정이 존재하지 않거나 이미 삭제된 일정입니다."));
     }
 
     // 일정 삭제
     public void deleteSchedule(Long id, ScheduleDto scheduleDto) {
         if(scheduleRepository.isDelete(id)) {
-            throw new AlreadyDeleteException("이미 삭제된 일정입니다.");
+            throw new AlreadyDeleteException();
         }
         int i = scheduleRepository.delete(id, scheduleDto);
         if(i == 0) {

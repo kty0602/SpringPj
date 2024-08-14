@@ -19,4 +19,5 @@ public class ScheduleDto {
     @NotBlank
     private String password;
     private Long managerId;
+
 }

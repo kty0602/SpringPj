@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -57,13 +58,14 @@ public class ScheduleRepository {
     }
 
     // 저장된 일 특정 Id값을 통해 내용 가져오기, + Manager 값들 가져오기 위해서 Join 실행
-    public Schedule findById(Long scheduleId) {
+    // Optional로 수정 참고 : https://bepoz-study-diary.tistory.com/367
+    public Optional<Schedule> findById(Long scheduleId) {
         String sql = "SELECT s.*, m.* FROM Schedule s "+
-        "JOIN Manager m ON s.managerId = m.managerId WHERE s.scheduleId = ?";
+        "JOIN Manager m ON s.managerId = m.managerId WHERE s.scheduleId = ? AND s.deleteStatus = FALSE";
         try {
-            return jdbcTemplate.queryForObject(sql, scheduleRowMapper(), scheduleId);
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, scheduleRowMapper(), scheduleId));
         } catch (EmptyResultDataAccessException e) {
-            return null;
+            return Optional.empty();
         }
     }
 
