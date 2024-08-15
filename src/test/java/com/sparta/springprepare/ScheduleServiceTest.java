@@ -1,6 +1,6 @@
 package com.sparta.springprepare;
 
-import com.sparta.springprepare.dto.ScheduleDto;
+import com.sparta.springprepare.dto.ScheduleRequestDto;
 import com.sparta.springprepare.service.ScheduleService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +18,12 @@ public class ScheduleServiceTest {
 
         // 50개의 Schedule 데이터 삽입
         for (int i = 5; i < 55; i++) {
-            ScheduleDto scheduleDto = new ScheduleDto();
-            scheduleDto.setContents("테스트" + i);
-            scheduleDto.setPassword(password);
-            scheduleDto.setManagerId(managerId);
+            ScheduleRequestDto scheduleRequestDto = new ScheduleRequestDto();
+            scheduleRequestDto.setContents("테스트" + i);
+            scheduleRequestDto.setPassword(password);
+            scheduleRequestDto.setManagerId(managerId);
 
-            scheduleService.saveSchedule(scheduleDto);
+            scheduleService.saveSchedule(scheduleRequestDto);
         }
     }
 }

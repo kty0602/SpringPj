@@ -1,6 +1,6 @@
 package com.sparta.springprepare.repository;
 
-import com.sparta.springprepare.dto.ScheduleDto;
+import com.sparta.springprepare.dto.ScheduleRequestDto;
 import com.sparta.springprepare.entity.Manager;
 import com.sparta.springprepare.entity.Schedule;
 import lombok.RequiredArgsConstructor;
@@ -44,10 +44,10 @@ public class ScheduleRepository {
     }
 
     // 할 일 등록
-    public Long save(ScheduleDto scheduleDto) {
+    public Long save(ScheduleRequestDto scheduleRequestDto) {
         String sql = "INSERT INTO Schedule (contents, password, managerId, regDate, modDate, deleteStatus) " +
                 "VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, FALSE)";
-        jdbcTemplate.update(sql, scheduleDto.getContents(), scheduleDto.getPassword(), scheduleDto.getManagerId());
+        jdbcTemplate.update(sql, scheduleRequestDto.getContents(), scheduleRequestDto.getPassword(), scheduleRequestDto.getManagerId());
 
         // 최근 마지막에 삽입된 scheduleId값 가져오기 -> 작성할 때 등록된 정보를 반환받기 위해서
         // Long타입으로 직접 변환하려고 했으나 오류 발생,
@@ -98,25 +98,25 @@ public class ScheduleRepository {
 
     // 일정 수정 -> JdbcTemplate update 메서드 사용 시 실행 후 영향을 받은 행의 수를 반환
     // 참고 : https://preamtree.tistory.com/91
-    public int update(Long id, ScheduleDto scheduleDto) {
+    public int update(Long id, ScheduleRequestDto scheduleRequestDto) {
         List<Object> params = new ArrayList<>();
         String sql = "UPDATE Schedule SET ";
         boolean isFirstField = true; // 들어오는 수정할 곳이 첫 필드인지 아닌지 검사
 
-        if(scheduleDto.getContents() != null) {
+        if(scheduleRequestDto.getContents() != null) {
             if (!isFirstField) { // 첫번째 필드가 아니라면 , 추가
                 sql += ", ";
             }
             sql += "contents = ?";
-            params.add(scheduleDto.getContents());
+            params.add(scheduleRequestDto.getContents());
             isFirstField = false;
         }
-        if(scheduleDto.getManagerId() != null) {
+        if(scheduleRequestDto.getManagerId() != null) {
             if (!isFirstField) {
                 sql += ", ";
             }
             sql += "managerId = ?";
-            params.add(scheduleDto.getManagerId());
+            params.add(scheduleRequestDto.getManagerId());
             isFirstField = false;
         }
         if (!isFirstField) {
@@ -124,15 +124,15 @@ public class ScheduleRepository {
         }
         sql += "modDate = CURRENT_TIMESTAMP WHERE scheduleId = ? AND password = ?";
         params.add(id);
-        params.add(scheduleDto.getPassword());
+        params.add(scheduleRequestDto.getPassword());
 
         return jdbcTemplate.update(sql, params.toArray());
     }
 
     // 일정 삭제
-    public int delete(Long id, ScheduleDto scheduleDto) {
+    public int delete(Long id, ScheduleRequestDto scheduleRequestDto) {
         String sql = "UPDATE Schedule SET deleteStatus = TRUE WHERE ScheduleId = ? AND password = ?";
-        return jdbcTemplate.update(sql, id, scheduleDto.getPassword());
+        return jdbcTemplate.update(sql, id, scheduleRequestDto.getPassword());
     }
 
     // 일정 삭제 체크(이미 삭제가 된건지 아닌건지 확인)

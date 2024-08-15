@@ -9,7 +9,7 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class ManagerDto {
+public class ManagerRequestDto {
     @NotNull
     @NotBlank
     private String managerName;

@@ -1,7 +1,7 @@
 package com.sparta.springprepare.controller;
 
-import com.sparta.springprepare.dto.ManagerDto;
-import com.sparta.springprepare.entity.Manager;
+import com.sparta.springprepare.dto.ManagerRequestDto;
+import com.sparta.springprepare.dto.ManagerResponseDto;
 import com.sparta.springprepare.service.ManagerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,15 +18,15 @@ public class ManagerController {
 
     // 관리자 등록
     @PostMapping()
-    public ResponseEntity<Manager> saveManager(@Valid @RequestBody ManagerDto managerDto) {
-        Manager manager = managerService.saveManager(managerDto);
+    public ResponseEntity<ManagerResponseDto> saveManager(@Valid @RequestBody ManagerRequestDto managerRequestDto) {
+        ManagerResponseDto manager = managerService.saveManager(managerRequestDto);
         return new ResponseEntity<>(manager, HttpStatus.OK);
     }
 
     // 관리자 조회
     @GetMapping("/{managerId}")
-    public ResponseEntity<Manager> getManager(@PathVariable("managerId") Long id) {
-        Manager manager = managerService.get(id);
+    public ResponseEntity<ManagerResponseDto> getManager(@PathVariable("managerId") Long id) {
+        ManagerResponseDto manager = managerService.get(id);
         return new ResponseEntity<>(manager, HttpStatus.OK);
     }
 

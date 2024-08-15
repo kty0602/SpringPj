@@ -1,6 +1,6 @@
 package com.sparta.springprepare.repository;
 
-import com.sparta.springprepare.dto.ManagerDto;
+import com.sparta.springprepare.dto.ManagerRequestDto;
 import com.sparta.springprepare.entity.Manager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.*;
@@ -25,10 +25,10 @@ public class ManagerRepository {
     }
 
     // 관리자 등록
-    public Long save(ManagerDto managerDto) {
+    public Long save(ManagerRequestDto managerRequestDto) {
         String sql = "INSERT INTO Manager (managerName, email, regDate, modDate) " +
                 "VALUES (?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
-        jdbcTemplate.update(sql,managerDto.getManagerName(), managerDto.getEmail());
+        jdbcTemplate.update(sql, managerRequestDto.getManagerName(), managerRequestDto.getEmail());
 
         String idQuery = "SELECT LAST_INSERT_ID()";
         Long id = jdbcTemplate.queryForObject(idQuery, Long.class);
